@@ -1,13 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-
+import "@testing-library/jest-dom"
 import {screen, waitFor} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import { ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
-
+import userEvent from "@testing-library/user-event"
 import router from "../app/Router.js";
 
 describe("Given I am connected as an employee", () => {
@@ -26,6 +26,7 @@ describe("Given I am connected as an employee", () => {
       await waitFor(() => screen.getByTestId('icon-window'))
       const windowIcon = screen.getByTestId('icon-window')
       //to-do write expect expression
+      expect(windowIcon.classList.contains('active-icon')).toBeTruthy()
       
 
     })
@@ -38,5 +39,49 @@ describe("Given I am connected as an employee", () => {
       expect(dates).toEqual(datesSorted)
     })
     
+  })
+})
+describe("When the eyes button is pressed,", () => {
+  test("Open the modal", async () => {
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+    window.localStorage.setItem('user', JSON.stringify({
+      type: 'Employee'
+    }))
+    const root = document.createElement("div")
+    root.setAttribute("id", "root")
+    document.body.append(root)
+    router()
+    window.onNavigate(ROUTES_PATH.Bills)
+    $.fn.modal = jest.fn();
+
+    await waitFor(() => screen.getAllByTestId('icon-eye'))
+    const firstIconEyeButton = screen.getAllByTestId("icon-eye")[0];
+    userEvent.click(firstIconEyeButton);
+    await waitFor(() => screen.getByAltText("Bill"));
+    const billImage = screen.getByAltText("Bill");
+    expect(billImage).toHaveAttribute("src","https://test.storage.tld/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a");
+  })
+})
+
+describe("When the new bill button is clicked,", () => {
+
+  test("Then new bills form should open", async () => {
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+    window.localStorage.setItem('user', JSON.stringify({
+      type: 'Employee'
+    }))
+    const root = document.createElement("div")
+    root.setAttribute("id", "root")
+    document.body.append(root)
+    router()
+    window.onNavigate(ROUTES_PATH.Bills)
+
+    await waitFor(() => screen.getByTestId('btn-new-bill'))
+    const btnNewBill = screen.getByTestId('btn-new-bill')
+    userEvent.click(btnNewBill);
+    router()
+    window.onNavigate(ROUTES_PATH.NewBill)
+    const url = window.location.href;
+    expect(url).toEqual("http://localhost/"+ROUTES_PATH.NewBill);
   })
 })
