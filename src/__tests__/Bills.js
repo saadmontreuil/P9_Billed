@@ -84,4 +84,6 @@ describe("When the new bill button is clicked,", () => {
     const url = window.location.href;
     expect(url).toEqual("http://localhost/"+ROUTES_PATH.NewBill);
   })
+  
 })
+

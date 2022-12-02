@@ -20,6 +20,7 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
+  console.log(data,(data && data.length) ? data.map(bill => row(bill)).join("") : "")
   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
 }
 
