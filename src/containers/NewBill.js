@@ -21,6 +21,8 @@ export default class NewBill {
     e.preventDefault()
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
+    const fileInput = e.target;
+    fileInput.setCustomValidity("");
     const fileName = filePath[filePath.length-1]
     if (fileName.match(/\.(jpg|jpeg|png|gif)$/)) {
       const formData = new FormData()
@@ -36,14 +38,17 @@ export default class NewBill {
             noContentType: true
           }
         })
-        .then(({fileUrl, key}) => {
-          console.log(fileUrl)
+        .then((p) => {
+          console.log(p)
+          const {fileUrl, key} = p
           this.billId = key
           this.fileUrl = fileUrl
           this.fileName = fileName
+          this.filePath = filePath
         }).catch(error => console.error(error))
     } else {
-      alert("Le fichier doit être une image")
+      // alert("Le fichier doit être une image")
+      fileInput.setCustomValidity("Le fichier doit être une image");
     }
   }
   handleSubmit = e => {
@@ -63,6 +68,7 @@ export default class NewBill {
       fileName: this.fileName,
       status: 'pending'
     }
+    console.log(bill)
     this.updateBill(bill)
     this.onNavigate(ROUTES_PATH['Bills'])
   }

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+
 import "@testing-library/jest-dom"
 import {screen, waitFor} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
@@ -86,4 +87,5 @@ describe("When the new bill button is clicked,", () => {
   })
   
 })
+
 
