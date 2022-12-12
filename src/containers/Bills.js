@@ -51,7 +51,6 @@ export default class {
               }
             }
           })
-          console.log("bills :", bills.sort((a, b) => b.date.localeCompare(a.date)))
         return bills.sort((a, b) => a.date.localeCompare(b.date));
       })
     }
