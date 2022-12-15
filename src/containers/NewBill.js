@@ -3,7 +3,6 @@ import Logout from "./Logout.js"
 
 export default class NewBill {
   constructor({ document, onNavigate, store, localStorage }) {
-    debugger ;
     this.document = document
     this.onNavigate = onNavigate
     this.store = store
@@ -39,7 +38,6 @@ export default class NewBill {
           }
         })
         .then((p) => {
-          console.log(p)
           const {fileUrl, key} = p
           this.billId = key
           this.fileUrl = fileUrl

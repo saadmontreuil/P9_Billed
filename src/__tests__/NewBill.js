@@ -50,6 +50,15 @@
        expect(input.files[0].name).toBe("image.png")
        expect(input.files[1].name).toBe("image.jpeg")
        expect(input.files[2].name).toBe("image.jpg")
+
+        expect(input.files[0].name.endsWith(".png")).toBeTruthy()
+        expect(input.files[1].name.endsWith(".jpeg")).toBeTruthy()
+        expect(input.files[2].name.endsWith(".jpg")).toBeTruthy()
+
+        expect(input.files[0].name.endsWith(".zip")).not.toBeTruthy()
+        expect(input.files[1].name.endsWith(".pdf")).not.toBeTruthy()
+        expect(input.files[2].name.endsWith(".doc")).not.toBeTruthy()
+
      })
  
      test("Then a bill is created", () => {

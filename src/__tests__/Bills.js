@@ -91,7 +91,7 @@ describe("When the new bill button is clicked,", () => {
   
 })
 describe('When I navigate to Bills page',  () => {
-  test('fetches bills from mock API GET', async () => {
+  test('Then it fetches bills from mock API GET', async () => {
     localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "e@e" }))
     const root = document.createElement("div")
     root.setAttribute("id", "root")
@@ -101,7 +101,7 @@ describe('When I navigate to Bills page',  () => {
     const bills = new Bills({document, onNavigate, store: mockStore, localStorage})
     bills.getBills().then((data) => {
       root.innerHTML = BillsUI({ data })
-      expect(document.querySelector("tbody").rows.length).toBeGreaterThan(0)
+      expect(document.querySelector("tbody").rows.length).toBe(4)
     })
   })
 })
@@ -116,16 +116,46 @@ describe("When an error occurs on API", () => {
     document.body.appendChild(root)
     router()
   })
+  // test("Then it fetches bills from an API and fails with 404 message error", async () => {
+  //   const html = BillsUI({error: "Erreur 404"})
+  //   document.body.innerHTML = html
+  //   const message = await screen.getByText(/Erreur 404/)
+  //   expect(message).toBeTruthy()
+  // })
   test("fetches bills from an API and fails with 404 message error", async () => {
+
+    mockStore.bills.mockImplementationOnce(() => {
+      return {
+        list : () =>  {
+          return Promise.reject(new Error("Erreur 404"))
+        }
+      }})
     const html = BillsUI({error: "Erreur 404"})
-    document.body.innerHTML = html
+    document.body.innerHTML = html  
+    // window.onNavigate(ROUTES_PATH.Bills)
+    // await new Promise(process.nextTick);
     const message = await screen.getByText(/Erreur 404/)
     expect(message).toBeTruthy()
   })
 
-  test("fetches messages from an API and fails with 500 message error", async () => {
+  // test("fetches messages from an API and fails with 500 message error", async () => {
+  //   const html = BillsUI({error: "Erreur 500"})
+  //   document.body.innerHTML = html
+  //   const message = await screen.getByText(/Erreur 500/)
+  //   expect(message).toBeTruthy()
+  // })
+  test("fetches bills from an API and fails with 500 message error", async () => {
+
+    mockStore.bills.mockImplementationOnce(() => {
+      return {
+        list : () =>  {
+          return Promise.reject(new Error("Erreur 500"))
+        }
+      }})
     const html = BillsUI({error: "Erreur 500"})
-    document.body.innerHTML = html
+    document.body.innerHTML = html  
+    // window.onNavigate(ROUTES_PATH.Bills)
+    // await new Promise(process.nextTick);
     const message = await screen.getByText(/Erreur 500/)
     expect(message).toBeTruthy()
   })
