@@ -46,7 +46,7 @@ describe("Given I am connected as an employee", () => {
   })
 })
 describe("When the eyes button is pressed,", () => {
-  test("Open the modal", async () => {
+  test("Then Open the modal", async () => {
     Object.defineProperty(window, 'localStorage', { value: localStorageMock })
     window.localStorage.setItem('user', JSON.stringify({
       type: 'Employee'
@@ -116,7 +116,7 @@ describe("When an error occurs on API", () => {
     document.body.appendChild(root)
     router()
   })
-  test("fetches bills from an API and fails with 404 message error", async () => {
+  test("Then fetches bills from an API and fails with 404 message error", async () => {
 
     mockStore.bills.mockImplementationOnce(() => {
       return {
@@ -131,7 +131,7 @@ describe("When an error occurs on API", () => {
   })
 
 
-  test("fetches bills from an API and fails with 500 message error", async () => {
+  test("Then fetches bills from an API and fails with 500 message error", async () => {
 
     mockStore.bills.mockImplementationOnce(() => {
       return {

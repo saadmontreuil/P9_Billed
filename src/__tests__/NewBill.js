@@ -10,6 +10,7 @@
  import {ROUTES, ROUTES_PATH} from "../constants/routes.js"
  import router from "../app/Router.js"
  import store from "../__mocks__/store.js"
+ import mockStore from "../__mocks__/store"
  import userEvent from "@testing-library/user-event"
  
  describe("Given I am connected as an employee", () => {
@@ -28,6 +29,45 @@
        expect(activeIcon).toBeTruthy()
      })
    })
+   describe("when I click on the submit button", () => {
+    test("the bill should be sent", () => {
+      jest.spyOn(mockStore, "bills");
+      Object.defineProperty(window, "localStorage", { value: localStorageMock });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+          email: "a@a",
+        })
+      );
+  
+      const expenseType = screen.getByTestId("expense-type");
+      expenseType.value = "Transports";
+  
+      const expenseName = screen.getByTestId("expense-name");
+      expenseName.value = "test1";
+  
+      const expenseAmount = screen.getByTestId("amount");
+      expenseAmount.value = 100;
+  
+      const expenseDate = screen.getByTestId("datepicker");
+      expenseDate.value = "2001-01-01";
+  
+      const expenseVAT = screen.getByTestId("vat");
+      expenseVAT.value = "";
+  
+      const expensePCT = screen.getByTestId("pct");
+      expensePCT.value = 20;
+  
+      const expenseCommentary = screen.getByTestId("commentary");
+      expenseCommentary.value = "plop";
+  
+      const form = screen.getByTestId("form-new-bill");
+      fireEvent.submit(form);
+  
+      expect(form).toBeTruthy();
+    });
+  });
    describe('When I select an image in a correct format', () => {
      test("Then the input file should display the file name", async () => {
        const html = NewBillUI()
@@ -51,13 +91,6 @@
        expect(input.files[1].name).toBe("image.jpeg")
        expect(input.files[2].name).toBe("image.jpg")
 
-        // expect(input.files[0].name.endsWith(".png")).toBeTruthy()
-        // expect(input.files[1].name.endsWith(".jpeg")).toBeTruthy()
-        // expect(input.files[2].name.endsWith(".jpg")).toBeTruthy()
-
-        // expect(input.files[0].name.endsWith(".zip")).not.toBeTruthy()
-        // expect(input.files[1].name.endsWith(".pdf")).not.toBeTruthy()
-        // expect(input.files[2].name.endsWith(".doc")).not.toBeTruthy()
 
      })
      test("Then its allowed to upload pictures",async ()=>{
