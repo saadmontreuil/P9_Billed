@@ -37,6 +37,7 @@ export default class NewBill {
             noContentType: true
           }
         })
+        
         .then((p) => {
           const {fileUrl, key} = p
           this.billId = key
@@ -45,7 +46,6 @@ export default class NewBill {
           // this.filePath = filePath
         }).catch(error => console.error(error))
     } else {
-      // alert("Le fichier doit être une image")
       fileInput.setCustomValidity("Le fichier doit être une image");
     }
   }

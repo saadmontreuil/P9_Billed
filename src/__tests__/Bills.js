@@ -44,7 +44,7 @@ describe("Given I am connected as an employee", () => {
     })
     
   })
-})
+
 describe("When the eyes button is pressed,", () => {
   test("Then Open the modal", async () => {
     Object.defineProperty(window, 'localStorage', { value: localStorageMock })
@@ -129,8 +129,6 @@ describe("When an error occurs on API", () => {
     const message = await screen.getByText(/Erreur 404/)
     expect(message).toBeTruthy()
   })
-
-
   test("Then fetches bills from an API and fails with 500 message error", async () => {
 
     mockStore.bills.mockImplementationOnce(() => {
@@ -146,4 +144,4 @@ describe("When an error occurs on API", () => {
   })
 })
 
-
+})

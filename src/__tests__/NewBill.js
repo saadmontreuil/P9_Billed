@@ -30,7 +30,7 @@
      })
    })
    describe("when I click on the submit button", () => {
-    test("the bill should be sent", () => {
+    test("Then bill should be sent", () => {
       jest.spyOn(mockStore, "bills");
       Object.defineProperty(window, "localStorage", { value: localStorageMock });
       window.localStorage.setItem(
@@ -127,16 +127,15 @@
         fireEvent.change(input, {
           target: {
             files: [
-              new File(["image.png"], "image.png", {type: "image/png"}),
-              new File(["image.jpeg"], "image.jpeg", {type: "image/jpeg"}),
-              new File(["image.jpg"], "image.jpg", {type: "image/jpg"})
+              new File(["file.zip"], "file.zip", {type: "application/zip"})
             ],
           },
         })
-        expect(handleChangeFile).toHaveBeenCalled()
-        expect(input.files[0].name.endsWith(".zip")).not.toBeTruthy()
-        expect(input.files[1].name.endsWith(".pdf")).not.toBeTruthy()
-        expect(input.files[2].name.endsWith(".doc")).not.toBeTruthy()
+       
+        expect(input.files[0].name.endsWith(".png")).toBeFalsy()
+        expect(input.files[0].name.endsWith(".jpeg")).toBeFalsy()
+        expect(input.files[0].name.endsWith(".jpg")).toBeFalsy()
+        expect(handleChangeFile).not.toHaveBeenCalled;
 
       })
      test("Then a bill is created", () => {
@@ -151,19 +150,83 @@
        expect(handleSubmit).toHaveBeenCalled()
      })
    })
-   describe("When I add a new bill", () => {
-    
-    test("Then it fails with a 404 message error", async () => {
-      const html = BillsUI({ error: "Erreur 404" })
-      document.body.innerHTML = html
-      const message = await screen.getByText(/Erreur 404/)
-      expect(message).toBeTruthy()
+ })
+
+  //test d'intégration POST new bill
+  describe("When I add a new bill", () => {
+    test("Then it creates a new bill", () => {
+      document.body.innerHTML = NewBillUI()
+      const formBill = screen.getByTestId("form-new-bill")
+      const mockBill = {
+        type: "IT et électronique",
+        name: "Macbook Pro",
+        datepicker: "2022-11-11",
+        amount: "32",
+        vat: "99",
+        pct: "23",
+        commentary: "Macbook Pro M1 2022",
+        file: new File(["Macbook"], "Macbook.jpeg", {type: "image/jpeg"}),
+      }
+      const formInputsValues = {
+        type: screen.getByTestId("expense-type"),
+        name: screen.getByTestId("expense-name"),
+        datepicker: screen.getByTestId("datepicker"),
+        amount: screen.getByTestId("amount"),
+        vat: screen.getByTestId("vat"),
+        pct: screen.getByTestId("pct"),
+        commentary: screen.getByTestId("commentary"),
+        file: screen.getByTestId("file"),
+      }
+
+      fireEvent.change(formInputsValues.type, {target: { value: mockBill.type }})
+      expect(formInputsValues.type.value).toBe(mockBill.type)
+
+      fireEvent.change(formInputsValues.name, {target: { value: mockBill.name }})
+      expect(formInputsValues.name.value).toBe(mockBill.name)
+
+      fireEvent.change(formInputsValues.datepicker, {target: { value: mockBill.datepicker }})
+      expect(formInputsValues.datepicker.value).toBe(mockBill.datepicker)
+
+      fireEvent.change(formInputsValues.amount, {target: { value: mockBill.amount }})
+      expect(formInputsValues.amount.value).toBe(mockBill.amount)
+
+      fireEvent.change(formInputsValues.vat, {target: { value: mockBill.vat }})
+      expect(formInputsValues.vat.value).toBe(mockBill.vat)
+
+      fireEvent.change(formInputsValues.pct, {target: { value: mockBill.pct }})
+      expect(formInputsValues.pct.value).toBe(mockBill.pct)
+
+      fireEvent.change(formInputsValues.commentary, {target: { value: mockBill.commentary }})
+      expect(formInputsValues.commentary.value).toBe(mockBill.commentary)
+
+      userEvent.upload(formInputsValues.file, mockBill.file)
+      expect(formInputsValues.file.files[0]).toStrictEqual(mockBill.file)
+      expect(formInputsValues.file.files).toHaveLength(1)
+
+      Object.defineProperty(window, "localStorage", {
+        value: {
+          getItem: jest.fn(() =>
+              JSON.stringify({
+                email: "test@test.com",
+              })
+          )
+        },
+        writable: true
+      })
+      const onNavigate = (pathname) => document.body.innerHTML = ROUTES({ pathname })
+      const newBill = new NewBill({document, onNavigate, localStorage: window.localStorage})
+      const handleSubmit = jest.fn(newBill.handleSubmit)
+      formBill.addEventListener("submit", handleSubmit)
+      fireEvent.submit(formBill)
+      expect(handleSubmit).toHaveBeenCalled()
     })
-    test("Then it fails with a 500 message error", async () => {
-      const html = BillsUI({ error: "Erreur 500" })
-      document.body.innerHTML = html
-      const message = await screen.getByText(/Erreur 500/)
-      expect(message).toBeTruthy()
+    describe("When an error occurs on API", () => {
+    
+      test("Then it fails with a 500 message error", async () => {
+        const html = BillsUI({ error: "Erreur 500" })
+        document.body.innerHTML = html
+        const message = await screen.getByText(/Erreur 500/)
+        expect(message).toBeTruthy()
+      })
     })
   })
- })
